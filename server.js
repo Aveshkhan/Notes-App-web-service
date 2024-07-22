@@ -2,11 +2,13 @@ const express = require('express');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const noteRoutes = require('./routes/notes.route.js')
+const cors = require('cors')
 
 dotenv.config()
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 const PORT = process.env.PORT;
 const URI = process.env.uri;
