@@ -3,7 +3,7 @@ const Note = require('../models/notes.model.js')
 const getNotes = async (req, res) => {
     try {
         const notes = await Note.find();
-        res.json(notes);
+        res.status(200).json(notes);
     } catch (error) {
         res.status(500).json({ message: 'Server Error' });
     }
@@ -30,7 +30,7 @@ const getNoteById = async (req, res) => {
         const noteId = req.params.id
 
         const note = await Note.findById(noteId)
-        res.json(note)
+        res.status(200).json(note)
     } catch (error){
         res.status(500).json({ message: 'Server Error' });
     }
@@ -52,7 +52,7 @@ const updateNote = async (req, res) => {
             return res.status(404).json({ message: 'Note not found' });
         }
 
-        res.json(updatedNote);
+        res.status(200).json(updatedNote);
 
     } catch(error){
         res.status(500).json({ message: 'Server Error' });
@@ -64,7 +64,7 @@ const deleteNote = async (req, res) => {
         const noteId = req.params.id
 
         const note = await Note.findByIdAndDelete(noteId)
-        res.json({ message: `${note.title} Note Deleted Successfully` })
+        res.status(200).json({ message: `${note.title} Note Deleted Successfully` })
     } catch(error){
         res.status(500).json({ message: 'Server Error' });
     }
