@@ -20,7 +20,7 @@ app.use(
 );
 app.use(express.json());
 app.use(cors({
-    origin: process.env.CLIENT_URL,
+    origin: ['https://keep-notes-ashy-chi.vercel.app'],
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
 }));
