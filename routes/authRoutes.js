@@ -7,7 +7,8 @@ dotenv.config()
 const router = express.Router();
 
 router.get('/login/success', async (req, res) => {
-    console.log('REQ USER =============>>>',req.user)
+    console.log('REQ =============>>>', req);
+    console.log('REQ USER =============>>>',req.user);
     if (req.user) {
         const { email, name, picture } = req.user._json;
         // console.log(' User ===> ', req.user._json)
