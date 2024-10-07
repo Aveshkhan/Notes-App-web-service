@@ -6,21 +6,29 @@ const authRoutes = require('./routes/authRoutes.js')
 const cors = require('cors')
 const passport = require('passport')
 const passportStrategy = require("./passport.js")
-const cookieSession = require('cookie-session')
+const MongoStore = require('connect-mongo'); // Import connect-mongo
+const session = require('express-session');
 
 dotenv.config()
 const app = express();
 
 app.use(
-    cookieSession({
-        name: "session",
-        keys: ["keepNotes"],
-        maxAge: 24 * 60 * 60 * 100,
+    session({
+        secret: 'keepNotes', // A secret key for signing the session ID
+        resave: false, // Forces the session to be saved back to the session store
+        saveUninitialized: false, // Forces a session that is uninitialized to be saved to the store
+        store: MongoStore.create({
+            mongoUrl: process.env.uri, // Your MongoDB URI
+            collectionName: 'sessions', // Optional: customize the session collection name
+        }),
+        cookie: {
+            maxAge: 24 * 60 * 60 * 1000, // Cookie expiration time
+        },
     })
 );
 app.use(express.json());
 app.use(cors({
-    origin: ['https://keep-notes-ashy-chi.vercel.app'],
+    origin: process.env.CLIENT_URL,
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
 }));
