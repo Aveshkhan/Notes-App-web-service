@@ -1,79 +1,76 @@
 const express = require('express');
-const passport = require('passport')
+const passport = require('passport');
 const dotenv = require('dotenv');
 const User = require('../models/user.models');
 
-dotenv.config()
+dotenv.config();
 const router = express.Router();
 
 router.get('/login/success', async (req, res) => {
-    // console.log('REQ =============>>>', req);
-    console.log('REQ USER =============>>>',req.user);
-    if (req.user) {
-        const { email, name, picture } = req.user._json;
-        // console.log(' User ===> ', req.user._json)
-        
-        const userExists = await User.findOne({
-            email: email,
-        })
-        console.log('Existed User ===>',userExists)
-        if (!userExists) {
-            const user = new User({
-                email: email,
-                username: name,
-                image: picture,
+    try {
+        if (req.user) {
+            const { email, name, picture } = req.user._json;
 
-            })
-            console.log('User Creation ===>', user)
-            const createdUser = await user.save();
+            const userExists = await User.findOne({ email });
+            if (!userExists) {
+                const user = new User({
+                    email,
+                    username: name,
+                    image: picture,
+                });
+                const createdUser = await user.save();
 
-            res.status(200).json({
-                error: false,
-                message: "Successfully Signed Up",
-                user: createdUser,
-                // user: req.user,
-            })
+                res.status(200).json({
+                    error: false,
+                    message: "Successfully Signed Up",
+                    user: createdUser,
+                });
+            } else {
+                res.status(200).json({
+                    error: false,
+                    message: "Successfully Logged In",
+                    user: userExists,
+                });
+            }
         } else {
-            console.log('User Exist in DB')
-
-            res.status(200).json({
-                error: false,
-                message: "Successfully Loged In",
-                user: userExists,
-            })
+            res.status(403).json({
+                error: true,
+                message: "Not Authorized",
+            });
         }
-
-
-    } else {
-        res.status(403).json({
+    } catch (error) {
+        res.status(500).json({
             error: true,
-            message: "Not Authorized"
-        })
+            message: "Internal Server Error",
+            details: error.message,
+        });
     }
-})
+});
 
 router.get("/login/failed", (req, res) => {
     res.status(401).json({
         error: true,
-        message: "Login Failure"
-    })
-})
+        message: "Login Failure",
+    });
+});
 
 router.get('/google/callback', passport.authenticate("google", {
-    successRedirect: process.env.CLIENT_URL,
+    successRedirect: process.env.CLIENT_URL,  // Ensure CLIENT_URL is correctly set in your .env
     failureRedirect: "/login/failed",
-}))
+}));
 
 router.get('/google', passport.authenticate("google", ["profile", "email"]));
 
-router.get("/logout", (req, res) => {
-    req.logout();
-    res.status(200).json({
-        error: false,
-        message: "LogedOut Successfully"
+router.get("/logout", (req, res, next) => {
+    req.logout(function (err) {
+        if (err) {
+            return next(err);
+        }
+        res.status(200).json({
+            error: false,
+            message: "Logged Out Successfully"
+        });
     });
-
-})
-
+});
 
 module.exports = router;
