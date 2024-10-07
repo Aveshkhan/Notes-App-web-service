@@ -28,9 +28,9 @@ app.use(
         }),
         cookie: {
             maxAge: 24 * 60 * 60 * 1000, // 1 day
-            secure: true, // true only for HTTPS
-            sameSite: 'None', // Enable cross-site cookies
-            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+            // httpOnly: true,
         },
     })
 );
