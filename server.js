@@ -1,55 +1,61 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
-const noteRoutes = require('./routes/notes.route.js')
-const authRoutes = require('./routes/authRoutes.js')
-const cors = require('cors')
-const passport = require('passport')
-const passportStrategy = require("./passport.js")
-const MongoStore = require('connect-mongo'); // Import connect-mongo
+const noteRoutes = require('./routes/notes.route.js');
+const authRoutes = require('./routes/authRoutes.js');
+const cors = require('cors');
+const passport = require('passport');
+const passportStrategy = require('./passport.js');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 
-dotenv.config()
+dotenv.config();
 const app = express();
 
+mongoose.connect(process.env.uri, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log("DB Connected"))
+    .catch((error) => console.log("Connection Failed error ====>", error));
+
+// Session Middleware - Ensure it's added before Passport initialization
 app.use(
     session({
-        secret: 'keepNotes', // A secret key for signing the session ID
-        resave: false, // Forces the session to be saved back to the session store
-        saveUninitialized: false, // Forces a session that is uninitialized to be saved to the store
+        secret: 'keepNotes',
+        resave: false,
+        saveUninitialized: false,
         store: MongoStore.create({
-            mongoUrl: process.env.uri, // Your MongoDB URI
-            collectionName: 'sessions', // Optional: customize the session collection name
+            mongoUrl: process.env.uri,
+            collectionName: 'sessions',
         }),
         cookie: {
-            maxAge: 24 * 60 * 60 * 1000, // Cookie expiration time
+            maxAge: 24 * 60 * 60 * 1000, // 1 day
+            secure: true, // Set to true if using HTTPS
+            httpOnly: true,
         },
     })
 );
-app.use(express.json());
+
+// CORS configuration
 app.use(cors({
-    origin: process.env.CLIENT_URL,
+    origin: process.env.CLIENT_URL, // Your frontend URL
     methods: "GET,POST,PUT,DELETE",
-    credentials: true,
+    credentials: true, // Allow sending cookies
 }));
 
-app.use(passport.initialize())
-app.use(passport.session())
+// Passport initialization
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(express.json());
 
 const PORT = process.env.PORT;
-const URI = process.env.uri;
 
-app.use('/api/notes', noteRoutes)
+app.use('/api/notes', noteRoutes);
 app.use('/auth', authRoutes);
 
-
-mongoose.connect(URI).then(() => {
-    console.log("DB Connected")
-    app.listen(PORT, console.log(`Server is running on port ${PORT}`))
-}).catch((error) => {
-    console.log("Connection Failed error ====>", error);
-})
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
 
 app.get('/', (req, res) => {
-    res.send('Welcome to Notes App')
-})
+    res.send('Welcome to Notes App');
+});
