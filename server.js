@@ -28,7 +28,8 @@ app.use(
         }),
         cookie: {
             maxAge: 24 * 60 * 60 * 1000, // 1 day
-            secure: true, // Set to true if using HTTPS
+            secure: true, // true only for HTTPS
+            sameSite: 'None', // Enable cross-site cookies
             httpOnly: true,
         },
     })
