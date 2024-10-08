@@ -19,7 +19,7 @@ mongoose.connect(process.env.uri, { useNewUrlParser: true, useUnifiedTopology: t
 // Session Middleware - Ensure it's added before Passport initialization
 app.use(
     session({
-        secret: 'keepNotes',
+        secret: 'anything',
         resave: false,
         saveUninitialized: false,
         store: MongoStore.create({
