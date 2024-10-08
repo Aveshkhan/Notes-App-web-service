@@ -13,17 +13,17 @@ passport.use(
         },
         async function (accessToken, refreshToken, profile, callback) {
             console.log(profile)
-            callback(null, profile)
+            await callback(null, profile)
         }
     )
 );
 
-passport.serializeUser((user, done) => {
+passport.serializeUser(async (user, done) => {
     console.log("Serializing User:", user);
-    done(null, user);
+    await done(null, user);
 });
 
-passport.deserializeUser((user, done) => {
+passport.deserializeUser(async (user, done) => {
     console.log("Deserializing User:", user);
-    done(null, user ? user : null);
+    await done(null, user ? user : null);
 });

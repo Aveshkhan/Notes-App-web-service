@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.get('/login/success', async (req, res) => {
     try {
+        console.log(req.user)
         if (req.user) {
             const { email, name, picture } = req.user._json;
 
