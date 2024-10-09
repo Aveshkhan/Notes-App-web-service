@@ -8,31 +8,37 @@ const router = express.Router();
 
 router.get('/login/success', async (req, res) => {
     try {
-        console.log(req.user)
+        console.log('User Found ===> ', req.user)
         if (req.user) {
-            const { email, name, picture } = req.user._json;
+            // const { email, name, picture } = req.user._json;
 
-            const userExists = await User.findOne({ email });
-            if (!userExists) {
-                const user = new User({
-                    email,
-                    username: name,
-                    image: picture,
-                });
-                const createdUser = await user.save();
+            // const userExists = await User.findOne({ email });
+            // if (!userExists) {
+            //     const user = new User({
+            //         email,
+            //         username: name,
+            //         image: picture,
+            //     });
+            //     const createdUser = await user.save();
 
-                res.status(200).json({
-                    error: false,
-                    message: "Successfully Signed Up",
-                    user: createdUser,
-                });
-            } else {
-                res.status(200).json({
-                    error: false,
-                    message: "Successfully Logged In",
-                    user: userExists,
-                });
-            }
+            //     res.status(200).json({
+            //         error: false,
+            //         message: "Successfully Signed Up",
+            //         user: createdUser,
+            //     });
+            // } else {
+            //     res.status(200).json({
+            //         error: false,
+            //         message: "Successfully Logged In",
+            //         user: userExists,
+            //     });
+            // }
+
+            res.status(200).json({
+                error: false,
+                message: "Successfully Logged In",
+                user: req.user,
+            });
         } else {
             res.status(403).json({
                 error: true,
