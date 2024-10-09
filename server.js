@@ -29,7 +29,7 @@ app.use(
         cookie: {
             maxAge: 24 * 60 * 60 * 1000, // 1 day
             secure: process.env.NODE_ENV === 'production' ? true : false,
-            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+            // sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
             // httpOnly: true,
         },
     })
