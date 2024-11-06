@@ -35,6 +35,10 @@ app.use(
     })
 );
 
+if(process.env.NODE_ENV === 'production'){
+    app.set('trust proxy', 1)
+}
+
 // CORS configuration
 app.use(cors({
     origin: process.env.CLIENT_URL, // Your frontend URL
